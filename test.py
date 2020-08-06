@@ -5,6 +5,8 @@ from version import version as new_version
 
 
 def drop():
+    print('old', os.environ.get('version'))
+    print('new', new_version)
     if os.environ.get('version') != new_version:
         if os.environ.get('api'):
             connection = heroku3.from_key(os.environ.get('api'))
