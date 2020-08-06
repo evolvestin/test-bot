@@ -1,10 +1,11 @@
 import heroku3
 import os
 import _thread
+from time import sleep
 from version import version as new_version
 
-
-def drop():
+while True:
+    sleep(1)
     print('old', os.environ.get('version'))
     print('new', new_version)
     if os.environ.get('version') != new_version:
@@ -13,7 +14,3 @@ def drop():
             for app in connection.apps():
                 config = app.config()
                 config['version'] = new_version
-
-
-if __name__ == '__main__':
-    _thread.start_new_thread(drop, ())
