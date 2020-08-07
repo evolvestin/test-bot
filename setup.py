@@ -3,7 +3,7 @@ setup(
     name='evolve-telegram-objects',
     version='0.1.0',
     description='some telegram objects',
-    long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.txt').read(),
+    long_description=open('README.md').read(),
     url='https://github.com/steve10live/evolve-telegram-objects/',
     author='evolvestin',
     packages=['objects'],
