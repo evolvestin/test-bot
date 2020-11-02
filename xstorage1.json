@@ -2,7 +2,7 @@
   "type": "service_account",
   "project_id": "storage-216513",
   "private_key_id": "7f94b9d5500121749ec0a449e62bf86116d8700a",
-  "private_key": XSTORAGE1_PRIVATE,
+  "private_key": fgg,
   "client_email": "xstorage1@storage-216513.iam.gserviceaccount.com",
   "client_id": "104801559646104761679",
   "auth_uri": "https://accounts.google.com/o/oauth2/auth",
