@@ -1,14 +1,10 @@
-import gspread
 import re
 import os
 from bs4 import BeautifulSoup
 import requests
 import _thread
-import telebot
 import subprocess
 import sys
-from time import sleep
-from telegraph import upload
 from time import sleep
 from datetime import datetime
 os.environ["DEBUSSY"] = 'l'
