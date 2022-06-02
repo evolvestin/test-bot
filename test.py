@@ -7,6 +7,7 @@ import _thread
 import telebot
 import subprocess
 import sys
+from time import sleep
 from telegraph import upload
 from time import sleep
 from datetime import datetime
@@ -38,6 +39,7 @@ for package in requirements.split('\n'):
         downloads.append(f'{library_name}-{version}.tar.gz')
 
 print('Все файлы выкачаны', downloads, datetime.now().timestamp() - stamp)
+sleep(50)
 
 stamp = datetime.now().timestamp()
 
