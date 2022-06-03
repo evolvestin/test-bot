@@ -20,9 +20,14 @@ with open('requirements.txt') as file:
 
 
 for line in requirements:
-    packages.append(line)
-
-print(packages)
+    install = True if line and line not in wrapper_requirements else None
+    search, library_name = re.search('([!~>=])=(.*)', line), re.sub('[~>=]=.*', '', line)
+    if line and line not in wrapper_requirements and search:
+        if library_name in wrapper and search.group(1) in ['=', '>']:
+            version = int(re.sub(r'\D', '', search.group(2)))
+            wrapper_version = int(re.sub(r'\D', '', wrapper[library_name]) or '0')
+            install = False if wrapper_version >= version else install
+    packages.append(line) if install else None
 
 print('Все файлы выкачаны', packages, datetime.now().timestamp() - stamp)
 sleep(10)
@@ -30,7 +35,6 @@ sleep(10)
 
 stamp = datetime.now().timestamp()
 del wrapper, libraries, requirements, wrapper_requirements
-
 while True:
     os.system('echo Hello from the other side!')
     for package in packages:
