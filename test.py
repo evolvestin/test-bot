@@ -32,7 +32,7 @@ print(packages)
 
 print('Все файлы выкачаны', packages, datetime.now().timestamp() - stamp)
 sleep(10)
-_thread.exit()
+
 
 stamp = datetime.now().timestamp()
 del wrapper, libraries, requirements, wrapper_requirements
