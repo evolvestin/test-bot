@@ -1,2 +1,2 @@
-heroku3==4.0.3
+heroku3>=5.1.4
 requests>=2.27.1
