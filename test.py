@@ -1,48 +1,44 @@
 import re
 import os
-from bs4 import BeautifulSoup
 import requests
 import _thread
 import subprocess
 import sys
 from time import sleep
 from datetime import datetime
-os.environ["DEBUSSY"] = 'l'
+os.environ['DEBUSSY'] = 'l'
 stamp = datetime.now().timestamp()
-downloads = []
+packages = []
 
 with open('go.txt') as file:
-    requirements = file.read()
+    requirements = file.read().split('\n')
+    libraries = {re.sub('[~>=]=.*', '', line): re.sub('.*[~>=]=', '', line) for line in requirements}
+
+with open('requirements.txt') as file:
+    wrapper_requirements = file.read().split('\n')
+    wrapper = {re.sub('[~>=]=.*', '', line): re.sub('.*[~>=]=', '', line) for line in wrapper_requirements}
 
 
-def install(pack):
-    subprocess.check_call([sys.executable, "-m", "pip", "install", pack])
+for line in requirements:
+    search, install, library_name = re.search('([!~>=])=(.*)', line), True, re.sub('[~>=]=.*', '', line)
+    if line and line not in wrapper_requirements and search:
+        if library_name in wrapper and search.group(1) in ['=', '>']:
+            version = int(re.sub(r'\D', '', search.group(2)))
+            wrapper_version = int(re.sub(r'\D', '', wrapper[library_name]) or '0')
+            install = False if wrapper_version >= version else install
+        packages.append(line) if install else None
 
+print(packages)
 
-for package in requirements.split('\n'):
-    search = re.search('[!~>=]=(.*)', package)
-    version = search.group(1) if search else None
-    library_name = re.sub('[~>=]=.*', '', package)
-    query = BeautifulSoup(requests.get(f'https://pypi.org/simple/{library_name}/').text, 'html.parser')
-    links = query.find_all('a', text=f"{library_name}-{version}.tar.gz") if version else query.find_all('a')
-    download_link = links[-1].get('href') if links else None
-    if download_link:
-        print(download_link)
-        download = requests.get(download_link, stream=True)
-        with open(f'{library_name}-{version}.tar.gz', 'wb') as f:
-            for chunk in download:
-                f.write(chunk)
-        downloads.append(f'{library_name}-{version}.tar.gz')
-
-print('Все файлы выкачаны', downloads, datetime.now().timestamp() - stamp)
-sleep(50)
+print('Все файлы выкачаны', packages, datetime.now().timestamp() - stamp)
+sleep(10)
 
 stamp = datetime.now().timestamp()
-
+del wrapper, libraries, requirements, wrapper_requirements
 
 while True:
-    os.system("echo Hello from the other side!")
-    for i in downloads:
-        install(i)
-    print(f'Ушло на установку {len(downloads)} модулей', datetime.now().timestamp() - stamp, 'секунд')
+    os.system('echo Hello from the other side!')
+    for package in packages:
+        subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
+    print(f'Ушло на установку {len(packages)} модулей', datetime.now().timestamp() - stamp, 'секунд')
     sleep(1000)
