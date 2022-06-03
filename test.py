@@ -20,13 +20,7 @@ with open('requirements.txt') as file:
 
 
 for line in requirements:
-    search, install, library_name = re.search('([!~>=])=(.*)', line), True, re.sub('[~>=]=.*', '', line)
-    if line and line not in wrapper_requirements and search:
-        if library_name in wrapper and search.group(1) in ['=', '>']:
-            version = int(re.sub(r'\D', '', search.group(2)))
-            wrapper_version = int(re.sub(r'\D', '', wrapper[library_name]) or '0')
-            install = False if wrapper_version >= version else install
-        packages.append(line) if install else None
+    packages.append(line)
 
 print(packages)
 
