@@ -1,8 +1,8 @@
 emoji>=1.6.0
 aiogram==2.20
 Pillow==9.1.0
+gspread==5.4.0
 heroku3>=4.2.3
-gspread==3.6.0
 Unidecode==1.2.0
 requests>=2.25.1
 telegraph>=1.4.0
