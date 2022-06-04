@@ -30,6 +30,7 @@ def package_install(package):
 
 
 def get_environ(update_gspread: Union[bool, str]):
+    print('загружаем таблицы')
     table = gspread.service_account('environ.json').open('heroku cloud').worksheet('environ').get('A1:Z50000')
     print('Таблицы загружены', table[0])
 
