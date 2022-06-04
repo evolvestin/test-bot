@@ -1,6 +1,5 @@
 import re
 import os
-import requests
 import _thread
 import gspread
 import subprocess
