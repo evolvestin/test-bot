@@ -5,6 +5,7 @@ import _thread
 import subprocess
 import sys
 from time import sleep
+import concurrent.futures
 from datetime import datetime
 os.environ['DEBUSSY'] = 'l'
 stamp = datetime.now().timestamp()
@@ -40,7 +41,7 @@ while True:
     libraries = package_handler()
     print('Все файлы выкачаны', libraries, datetime.now().timestamp() - stamp)
     os.system('echo Hello from the other side!')
-    for library in libraries:
-        _thread.start_new_thread(package_install, (library,))
+    with concurrent.futures.ThreadPoolExecutor(max_workers=10) as future_executor:
+        futures = [future_executor.submit(package_install, library) for library in libraries]
     print(f'Ушло на установку {len(libraries)} модулей', datetime.now().timestamp() - stamp, 'секунд')
     sleep(1000)
