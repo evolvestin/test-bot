@@ -9,8 +9,7 @@ from time import sleep
 from typing import Union
 import concurrent.futures
 from datetime import datetime
-os.environ['DEBUSSY'] = 'l'
-stamp = datetime.now().timestamp()
+stamp, environ_installed = datetime.now().timestamp(), False
 
 
 def environmental_files():
@@ -29,13 +28,31 @@ def package_install(package):
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
 
 
-def get_environ(update_gspread: Union[bool, str]):
+def environ_install(update_gspread: Union[bool, str]):
+    global environ_installed
     print('загружаем таблицы')
     table = gspread.service_account('environ.json').open('heroku cloud').worksheet('environ').get('A1:Z50000')
-    if update_gspread:
-        print('Обновляем gspread')
-        _thread.start_new_thread(package_install, (update_gspread,))
-    print('Таблицы загружены', table[0])
+    _thread.start_new_thread(package_install, (update_gspread,)) if update_gspread else None
+    keys, api_row_id, api_columns, var_columns = table.pop(0), None, [], []
+    for key_id in range(len(keys)):
+        api_columns.append(key_id) if keys[key_id].startswith('api') else None
+        var_columns.append(key_id) if keys[key_id].startswith('var') else None
+    for row_id in range(len(table)):
+        for key_id in api_columns:
+            if key_id < len(table[row_id]) and os.environ['api'] == table[row_id][key_id]:
+                api_row_id = row_id
+
+    if api_row_id is not None:
+        variables = {}
+        for col_id in var_columns:
+            if col_id < len(table[api_row_id]):
+                variables[col_id] = table[api_row_id][col_id]
+        for col_id, value in variables.items():
+            regex = re.sub('var=', '', keys[col_id], 1) if 'var=' in keys[col_id] else None
+            for item in re.findall(regex, value) if regex else []:
+                if type(item) == tuple and len(item) == 2:
+                    os.environ[item[0].strip()] = item[1].strip()
+    environ_installed = True
 
 
 def package_handler():
@@ -66,9 +83,13 @@ def start_wrapper():
         libraries, update_gspread = package_handler()
         print('Все файлы выкачаны', libraries, datetime.now().timestamp() - stamp)
         os.system('echo Hello from the other side!')
-        _thread.start_new_thread(get_environ, (update_gspread,))
+        _thread.start_new_thread(environ_install, (update_gspread,))
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as future_executor:
             [future_executor.submit(package_install, library) for library in libraries]
+        while environ_installed is False:
+            pass
+        for i, k in os.environ.items():
+            print(i, k)
         print(f'Ушло на установку {len(libraries)} модулей', datetime.now().timestamp() - stamp, 'секунд')
         sleep(1000)
 
