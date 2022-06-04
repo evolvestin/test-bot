@@ -11,10 +11,10 @@ from typing import Union
 import concurrent.futures
 from datetime import datetime
 from git.repo.base import Repo
-stamp, environ_installed = datetime.now().timestamp(), False
+stamp = datetime.now().timestamp()
 
 
-def package_install(package):
+def package_installer(package):
     subprocess.check_call([sys.executable, '-m', 'pip', 'install', package])
 
 
@@ -36,15 +36,8 @@ def environmental_files():
     return created_files
 
 
-def environ_install(update_gspread: Union[bool, str]):
-    global environ_installed
-    print('загружаем таблицы')
-
-    environ_installed = True
-
-
-def package_handler():
-    packages = []
+def environ_installer():
+    environ, packages = False, []
     with open('requirements.txt') as file:
         wrapper_requirements = file.read().split('\n')
         wrapper = {re.sub('[~>=]=.*', '', line): re.sub('.*[~>=]=', '', line) for line in wrapper_requirements}
@@ -87,6 +80,7 @@ def package_handler():
                 paths = f'temp/{file_name}', file_name
                 shutil.copytree(*paths) if os.path.isdir(paths[0]) else shutil.copy(*paths)
             shutil.rmtree('temp', onerror=delete)
+            environ = True
 
     with open('requirements.txt') as file:
         for line in file.read().split('\n'):
@@ -98,19 +92,19 @@ def package_handler():
                     wrapper_version = int(re.sub(r'\D', '', wrapper[library_name]) or '0')
                     install = False if wrapper_version >= version else install
             packages.append(line) if install else None
+    while environ is False:
+        pass
     return packages
 
 
 def start_wrapper():
     while True:
         environmental_files()
-        libraries = package_handler()
+        libraries = environ_installer()
         print('Все файлы выкачаны', libraries, datetime.now().timestamp() - stamp)
         os.system('echo Hello from the other side!')
         with concurrent.futures.ThreadPoolExecutor(max_workers=10) as future_executor:
-            [future_executor.submit(package_install, library) for library in libraries]
-        while environ_installed is False:
-            pass
+            [future_executor.submit(package_installer, library) for library in libraries]
         for i, k in os.environ.items():
             print(i, k)
         print(f'Ушло на установку {len(libraries)} модулей', datetime.now().timestamp() - stamp, 'секунд')
