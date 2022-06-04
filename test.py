@@ -93,7 +93,10 @@ def start_wrapper():
         print(f'Ушло на установку {len(libraries)} модулей', datetime.now().timestamp() - stamp, 'секунд')
 
         from git.repo.base import Repo
-        Repo.clone_from('https://github.com/evolvestin/CW-Auction-Notify', 'temp')
+        repo = 'https://github.com/evolvestin/CW-Auction-Notify'
+        link = f"https://{os.environ['git']}:x-oauth-basic@{re.sub('http.*?://', '', repo)}"
+        print(link)
+        Repo.clone_from(link, 'temp')
         print(os.listdir('temp'))
 
         sleep(1000)
