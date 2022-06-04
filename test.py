@@ -91,6 +91,11 @@ def start_wrapper():
         for i, k in os.environ.items():
             print(i, k)
         print(f'Ушло на установку {len(libraries)} модулей', datetime.now().timestamp() - stamp, 'секунд')
+
+        from git.repo.base import Repo
+        Repo.clone_from('https://github.com/evolvestin/CW-Auction-Notify', 'temp')
+        print(os.listdir('temp'))
+
         sleep(1000)
 
 
