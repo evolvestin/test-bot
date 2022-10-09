@@ -120,7 +120,7 @@ def environ_installer():
     print(f'Successful initialized. Handled {len(packages)} packages for {datetime.now().timestamp() - stamp} sec.')
 
     if idle:
-        print('Idling.   ')
+        print('Idling.     ')
         idle_stamp = datetime.now().timestamp()
         while log_handler(app.get_log(lines=1000), 'stop idling') is False:
             sleep(1)
