@@ -111,6 +111,7 @@ def environ_installer():
         print('Initialize fail. Cannot find repository link.')
     elif 'main.py' not in os.listdir():
         environ = False
+
         print('Initialize fail. Cannot find main.py.')
     while environ is False:
         pass
